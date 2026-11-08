@@ -8,3 +8,4 @@ One line per published Short. The daily run reads this file and never repeats a 
 | 2026-11-07 | Voyager 1 reaching one light-day from Earth | Deep Dive 3D | What If You Texted Voyager 1 Right Now? #shorts | https://www.youtube.com/watch?v=bxFrbOw0wzs |
 | 2026-11-07 | Dinosaur blood: mineralized red blood cells and heme found in a 115-million-year-old dinosaur bone | Deep Dive 3D | What If a Dinosaur Still Had Blood? #shorts | https://www.youtube.com/watch?v=xOm1dlCVJ6I |
 | 2026-11-08 | Kublai Khan's 1281 fleet: dice and game tiles found on a Mongol-invasion wreck off Takashima | Paper Atlas | What Were Kublai Khan's Sailors Doing? #shorts | https://www.youtube.com/watch?v=sJ4UpbBipik |
+| 2026-11-08 | The Ann Francis padlock: 1583 Welsh shipwreck combination lock whose code (ANCE) was cracked with micro-CT scans | Paper Atlas | How Do You Open a 400-Year-Old Lock? #shorts | https://www.youtube.com/watch?v=SO2ew4AzFAY |
