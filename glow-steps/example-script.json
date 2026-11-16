@@ -1,0 +1,27 @@
+{
+  "title": "Which AI Do People Actually Use?",
+  "voice": "am_puck",
+  "speed": 1.0,
+  "lead": 0.4,
+  "outro": 0.9,
+  "gap": 0.28,
+  "music": "bed",
+  "captions": false,
+  "sources": [
+    "Similarweb worldwide web-visit share, October 2026, as reported by Momentic 'Top AI Chatbots by Market Share November 2026' (published 5 Nov 2026): order ChatGPT, Gemini, Claude, DeepSeek, Grok, Perplexity, Copilot. Web visits only; excludes apps and API use; Meta AI is not in the ranking. The video says 'website traffic', never 'users'.",
+    "Similarweb, 'AI Search Stats 2026' (29 Jul 2026): ChatGPT's share of generative-AI web traffic fell from about three quarters in June 2025 to about half by May 2026; Gemini's rose from under a tenth to over a quarter; Claude's rose to close to a tenth.",
+    "TechCrunch, 'ChatGPT's market share slips below 50% for first time' (16 Jun 2026), citing Sensor Tower State of AI Report 2026: top three by monthly users ChatGPT, Gemini, Claude; Grok, Perplexity, DeepSeek and Meta AI each under 5%.",
+    "Stable facts: Grok is made by xAI and built into X; DeepSeek is a Chinese lab known for open models; Claude is made by Anthropic; Gemini is Google's assistant; ChatGPT is made by OpenAI.",
+    "TO RE-CHECK before publishing: positions four and five depend on the measure (web visits). Open the Similarweb report itself to confirm the October order."
+  ],
+  "lines": [
+    { "text": "There are hundreds of AI tools out there, but which ones do people actually use?", "caps": "hundreds of *AI tools | which do people *actually use?", "gap": 0.32 },
+    { "text": "I looked at website traffic from October, and here's the top five, counting down.", "caps": "website *traffic | the top *five", "gap": 0.32 },
+    { "text": "Number five is Grok, the assistant from x A I that lives inside X.", "caps": "number *five | *Grok | lives inside *X" },
+    { "text": "Number four is DeepSeek, from a Chinese lab known for its open models.", "caps": "number *four | *DeepSeek | known for *open models" },
+    { "text": "Number three is Claude, from Anthropic, known for writing and coding.", "caps": "number *three | *Claude | writing and *coding" },
+    { "text": "Number two is Gemini, Google's assistant, which has climbed fast all year.", "caps": "number *two | *Gemini | climbed *fast" },
+    { "text": "And number one is still ChatGPT, from OpenAI, though its share has shrunk over the past year.", "caps": "number *one | *ChatGPT | its share *shrunk", "gap": 0.4 },
+    { "text": "Which one is on your phone?", "caps": "which *one is | on your *phone?" }
+  ]
+}
