@@ -6,3 +6,4 @@ One line per published Short. The daily run reads this file and never repeats a 
 |---|---|---|---|---|
 | 2026-11-16 | what a prompt is: context, specific, format | Glow Steps | Why Does AI Give You Boring Answers? | https://www.youtube.com/watch?v=R8CnRJIT0pI |
 | 2026-11-16 | why AI hallucinates: next-word prediction, guessing rewarded, ask and verify | Glow Steps | Why Does AI Confidently Make Things Up? | https://www.youtube.com/watch?v=dmLILrASxI4 |
+| 2026-11-17 | AI agent vs chatbot: goal, plan, tools, check | Glow Steps | Is an AI Agent Just a Fancy Chatbot? | https://www.youtube.com/watch?v=m43e0aQ_Jhw |
