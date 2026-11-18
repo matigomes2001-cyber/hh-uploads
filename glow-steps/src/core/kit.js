@@ -240,6 +240,10 @@ function icn(kind, x, y) {
     rr(-17, -2, 34, 28, 8); ctx.fill(); ctx.beginPath(); ctx.moveTo(-9, -2); ctx.lineTo(-9, -12); ctx.arc(0, -12, 9, Math.PI, 0); ctx.lineTo(9, -6); ctx.stroke();
   } else if (kind === 'pen') {
     ctx.beginPath(); ctx.moveTo(-14, 16); ctx.lineTo(14, -14); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-18, 20); ctx.lineTo(-10, 18); ctx.lineTo(-16, 12); ctx.closePath(); ctx.fill();
+  } else if (kind === 'clock') {
+    ctx.beginPath(); ctx.arc(0, 0, 20, 0, TAU); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(0, 0); ctx.lineTo(9, 6); ctx.stroke();
+  } else if (kind === 'eye') {
+    ctx.beginPath(); ctx.moveTo(-24, 0); ctx.quadraticCurveTo(0, -26, 24, 0); ctx.quadraticCurveTo(0, 26, -24, 0); ctx.stroke(); circle(0, 0, 7, C.white);
   } else if (kind === 'code') { text('</>', 0, 2, 30, C.white, { align: 'center' }); }
   else if (kind === 'x') { text('X', 0, 2, 44, C.white, { align: 'center' }); }
   ctx.restore();
@@ -299,4 +303,90 @@ export function ripple(x, y, t, a = 1) {
 export function spot(x, a = 1) {
   ctx.save(); const g = ctx.createLinearGradient(0, 0, 0, 1500); g.addColorStop(0, rgba(C.paper, 0.34 * a)); g.addColorStop(1, rgba(C.paper, 0));
   ctx.beginPath(); ctx.moveTo(x - 70, -300); ctx.lineTo(x + 70, -300); ctx.lineTo(x + 560, 1500); ctx.lineTo(x - 560, 1500); ctx.closePath(); ctx.fillStyle = g; ctx.fill(); ctx.restore();
+}
+
+// ── v3 additions (episode "why AI forgets"): chat bubbles, panel, step pills, toggle, note, eye ──
+/** chat bubble. edge = right edge (side 'u') or left edge (side 'a'); cy = centre y. o: { side, s, a, hi, dx }. returns width */
+export function msg(str, edge, cy, o = {}) {
+  ctx.save(); ctx.font = '700 34px Inter'; const tw = ctx.measureText(str).width, w = tw + 64, h = 84, u = (o.side || 'a') === 'u';
+  const cx = (u ? edge - w / 2 : edge + w / 2) + (o.dx || 0), s = o.s ?? 1;
+  ctx.translate(cx, cy); ctx.scale(s, s); ctx.globalAlpha *= o.a ?? 1;
+  ctx.shadowColor = 'rgba(8,5,30,0.45)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 8;
+  const g = ctx.createLinearGradient(0, -h / 2, 0, h / 2);
+  if (u) { g.addColorStop(0, C.violet); g.addColorStop(1, C.violetDark); } else { g.addColorStop(0, '#4A3A86'); g.addColorStop(1, '#33266B'); }
+  rr(-w / 2, -h / 2, w, h, 36); ctx.fillStyle = g; ctx.fill(); ctx.shadowColor = 'transparent';
+  rr(-w / 2 + 1, -h / 2 + 1, w - 2, h - 2, 35); ctx.strokeStyle = o.hi ? rgba(C.coral, 0.4 + 0.6 * o.hi) : 'rgba(255,255,255,0.18)'; ctx.lineWidth = o.hi ? 5 : 2; ctx.stroke();
+  ctx.font = '700 34px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = C.paper; ctx.fillText(str, 0, 2);
+  ctx.restore(); return w;
+}
+/** the context-window panel. o: { rim 0..1 (violet glow), danger 0..1 (coral), label, labelP (write-on 0..1), ghost 0..1 (dashed empty outline instead) } */
+export function panel(x, y, w, h, o = {}) {
+  ctx.save();
+  if (o.ghost) {
+    ctx.globalAlpha *= o.ghost; ctx.setLineDash([22, 18]); rr(x, y, w, h, 44); ctx.strokeStyle = rgba(C.violetLight, 0.55); ctx.lineWidth = 5; ctx.stroke(); ctx.setLineDash([]);
+    ctx.restore(); return;
+  }
+  glass(x, y, w, h, 44, { blur: 60, dy: 24, top: '#2D2358', bot: '#1F1745' });
+  const rim = o.rim ?? 0, dg = o.danger ?? 0;
+  if (rim > 0 || dg > 0) {
+    ctx.save(); const c = dg > 0 ? C.coral : C.violetLight, a = dg > 0 ? dg : rim;
+    ctx.shadowColor = rgba(c, 0.9 * a); ctx.shadowBlur = 36; rr(x, y, w, h, 44); ctx.strokeStyle = rgba(c, 0.95 * a); ctx.lineWidth = 7; ctx.stroke(); ctx.restore();
+  }
+  if (o.label) {
+    ctx.save(); ctx.font = '800 34px Sora'; const lw = ctx.measureText(o.label).width + 64, p = clamp(o.labelP ?? 1);
+    ctx.beginPath(); ctx.rect(x + 40, y - 80, lw * p, 120); ctx.clip();
+    const g = ctx.createLinearGradient(x, 0, x + lw, 0); g.addColorStop(0, C.violet); g.addColorStop(1, C.coral);
+    rr(x + 40, y - 34, lw, 68, 34); ctx.fillStyle = g; ctx.fill(); text(o.label, x + 72, y + 2, 34, C.white); ctx.restore();
+  }
+  ctx.restore();
+}
+export const clipRR = (x, y, w, h, r = 44) => { rr(x, y, w, h, r); ctx.clip(); };
+/** vertical fill gauge, p 0..1; full flashes coral */
+export function meter(x, y, h, p, flash = 0) {
+  ctx.save(); rr(x - 18, y, 36, h, 18); ctx.fillStyle = rgba(C.deep, 0.8); ctx.fill(); rr(x - 18, y, 36, h, 18); ctx.strokeStyle = 'rgba(245,243,255,0.2)'; ctx.lineWidth = 2; ctx.stroke();
+  const fh = Math.max(0, (h - 8) * clamp(p));
+  if (fh > 2) { const g = ctx.createLinearGradient(0, y + h, 0, y); g.addColorStop(0, C.violet); g.addColorStop(1, C.coral); rr(x - 14, y + h - 4 - fh, 28, fh, 14); ctx.fillStyle = g; ctx.fill(); }
+  if (flash > 0) { ctx.shadowColor = rgba(C.coral, 0.9); ctx.shadowBlur = 30 * flash; rr(x - 18, y, 36, h, 18); ctx.strokeStyle = rgba(C.coral, flash); ctx.lineWidth = 5; ctx.stroke(); }
+  ctx.restore();
+}
+export const PILLS = ['goes in', 'fills up', 'new chat', 'the fix'], PILL_Y = 476;
+export const pillX = (i) => 116 + 100 + i * 216;
+/** step pill i. u: 0 locked → 1 done (mint check). cur: highlighted as the current step. pose: { dx, dy, sx, sy, rot, a } */
+export function pill(i, u, cur, t, pose = {}) {
+  const w = 200, h = 112, x = pillX(i), y = PILL_Y + (pose.dy || 0);
+  ctx.save(); ctx.translate(x + (pose.dx || 0), y); ctx.rotate(pose.rot || 0); ctx.scale(pose.sx ?? 1, pose.sy ?? 1); ctx.globalAlpha *= pose.a ?? 1;
+  const pop = u > 0 && u < 1 ? 1 + 0.08 * Math.sin(Math.PI * eo(u)) : 1; ctx.scale(pop, pop);
+  if (u > 0.5) glass(-w / 2, -h / 2, w, h, 32, { blur: 24, dy: 8, top: '#43337A', bot: '#2E2358', edge: rgba(C.violetLight, 0.4) });
+  else { rr(-w / 2, -h / 2, w, h, 32); ctx.fillStyle = 'rgba(245,243,255,0.06)'; ctx.fill(); ctx.strokeStyle = cur ? rgba(C.violetLight, 0.7 + 0.3 * Math.sin(t * 6)) : 'rgba(245,243,255,0.12)'; ctx.lineWidth = cur ? 4 : 2; ctx.stroke(); }
+  const on = u > 0.5 || cur;
+  text('STEP ' + (i + 1), -w / 2 + 24, -22, 20, on ? C.violetLight : C.dimmer, { ui: true, w: 700 });
+  text(PILLS[i], -w / 2 + 24, 18, 32, on ? C.paper : C.dimmer);
+  if (u > 0.5) { ctx.save(); ctx.translate(w / 2 - 6, -h / 2 + 6); const k = 0.55 * eob(clamp((u - 0.5) * 2)); ctx.scale(k, k); circle(0, 0, 30, C.mint); ctx.strokeStyle = C.deep; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(-12, 1); ctx.lineTo(-3, 11); ctx.lineTo(14, -9); ctx.stroke(); ctx.restore(); }
+  else if (!cur) lockIcon(w / 2 - 30, -30, 0.42);
+  ctx.restore();
+}
+/** switch. on 0..1 (violet/coral when on, never mint) */
+export function toggle(x, y, on, label, s = 1, a = 1) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.globalAlpha *= a;
+  ctx.font = '800 40px Sora'; const lw = ctx.measureText(label).width, W2 = 150, w = lw + W2 + 80;
+  glass(-w / 2, -60, w, 120, 60, { blur: 26, dy: 10 });
+  text(label, -w / 2 + 36, 3, 40, C.paper);
+  const tx = w / 2 - 36 - W2, g = ctx.createLinearGradient(tx, 0, tx + W2, 0); g.addColorStop(0, lerpHex(C.dimmer, C.violet, on)); g.addColorStop(1, lerpHex(C.dimmer, C.coral, on));
+  rr(tx, -34, W2, 68, 34); ctx.fillStyle = g; ctx.fill();
+  circle(tx + 34 + (W2 - 68) * eio(clamp(on)), 0, 27, C.white);
+  ctx.restore();
+}
+function lerpHex(a, b, t) { const A = parseInt(a.slice(1), 16), B = parseInt(b.slice(1), 16), f = (sh) => Math.round(lerp((A >> sh) & 255, (B >> sh) & 255, clamp(t))); return `rgb(${f(16)},${f(8)},${f(0)})`; }
+/** sticky note card with a pin */
+export function note(str, x, y, s = 1, rot = 0, a = 1) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s); ctx.globalAlpha *= a;
+  ctx.font = '800 36px Sora'; const w = ctx.measureText(str).width + 80, h = 96;
+  ctx.shadowColor = 'rgba(8,5,30,0.5)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 10; rr(-w / 2, -h / 2, w, h, 22); ctx.fillStyle = C.paper; ctx.fill(); ctx.shadowColor = 'transparent';
+  text(str, 0, 4, 36, C.ink, { align: 'center' }); circle(0, -h / 2 + 4, 11, C.coral); ctx.restore();
+}
+/** an eye with a slash through it: "can't see" */
+export function eyeOff(x, y, s = 1, a = 1) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.globalAlpha *= a; circle(0, 0, 58, rgba(C.deep, 0.85));
+  ctx.strokeStyle = C.paper; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-34, 0); ctx.quadraticCurveTo(0, -30, 34, 0); ctx.quadraticCurveTo(0, 30, -34, 0); ctx.stroke(); circle(0, 0, 9, C.paper);
+  ctx.strokeStyle = C.coral; ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(-40, -36); ctx.lineTo(40, 36); ctx.stroke(); ctx.restore();
 }
