@@ -349,6 +349,7 @@ export function meter(x, y, h, p, flash = 0) {
   if (flash > 0) { ctx.shadowColor = rgba(C.coral, 0.9); ctx.shadowBlur = 30 * flash; rr(x - 18, y, 36, h, 18); ctx.strokeStyle = rgba(C.coral, flash); ctx.lineWidth = 5; ctx.stroke(); }
   ctx.restore();
 }
+export const PILL_TAGS = [];
 export const PILLS = ['goes in', 'fills up', 'new chat', 'the fix'], PILL_Y = 476;
 export const pillX = (i) => 116 + 100 + i * 216;
 /** step pill i. u: 0 locked → 1 done (mint check). cur: highlighted as the current step. pose: { dx, dy, sx, sy, rot, a } */
@@ -359,7 +360,7 @@ export function pill(i, u, cur, t, pose = {}) {
   if (u > 0.5) glass(-w / 2, -h / 2, w, h, 32, { blur: 24, dy: 8, top: '#43337A', bot: '#2E2358', edge: rgba(C.violetLight, 0.4) });
   else { rr(-w / 2, -h / 2, w, h, 32); ctx.fillStyle = 'rgba(245,243,255,0.06)'; ctx.fill(); ctx.strokeStyle = cur ? rgba(C.violetLight, 0.7 + 0.3 * Math.sin(t * 6)) : 'rgba(245,243,255,0.12)'; ctx.lineWidth = cur ? 4 : 2; ctx.stroke(); }
   const on = u > 0.5 || cur;
-  text('STEP ' + (i + 1), -w / 2 + 24, -22, 20, on ? C.violetLight : C.dimmer, { ui: true, w: 700 });
+  text(PILL_TAGS[i] || 'STEP ' + (i + 1), -w / 2 + 24, -22, 20, on ? C.violetLight : C.dimmer, { ui: true, w: 700 });
   text(PILLS[i], -w / 2 + 24, 18, 32, on ? C.paper : C.dimmer);
   if (u > 0.5) { ctx.save(); ctx.translate(w / 2 - 6, -h / 2 + 6); const k = 0.55 * eob(clamp((u - 0.5) * 2)); ctx.scale(k, k); circle(0, 0, 30, C.mint); ctx.strokeStyle = C.deep; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(-12, 1); ctx.lineTo(-3, 11); ctx.lineTo(14, -9); ctx.stroke(); ctx.restore(); }
   else if (!cur) lockIcon(w / 2 - 30, -30, 0.42);
